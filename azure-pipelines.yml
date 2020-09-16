@@ -2,7 +2,7 @@ schedules:
 - cron: "*/1 * * * *"
   displayName: scheduler
   branches:
-    include: [ master ] # which branches the schedule applies to
+    include: [ MadhuU02/yamlnew ] # which branches the schedule applies to
   always: false # whether to always run the pipeline or only if there have been source code changes since the last successful scheduled run. The default is false.
 
 resources:
