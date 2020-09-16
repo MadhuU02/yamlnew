@@ -1,3 +1,6 @@
+pool:
+  vmImage: 'vs2017-win2016'
+
 resources:
   repositories:
   - repository: new1
@@ -8,6 +11,10 @@ resources:
     type: github
     endpoint: github.com_MadhuU02
     name: MadhuU02/Template
+  - repository: new
+    type: azureRepos
+    endpoint: new
+    name: armTemplate/new
   - repository: yamlnew
     type: github
     endpoint: github.com_MadhuU02
@@ -15,10 +22,7 @@ resources:
     schedules:
     - cron: "*/1 * * * *"
       displayName: scheduler
-      always: false # whether to always run the pipeline or only if there have been source code changes since the last successful scheduled run. The default is false.
-
-pool:
-  vmImage: 'ubuntu-latest'
+      always: false 
 
 steps:
 - checkout: Template
