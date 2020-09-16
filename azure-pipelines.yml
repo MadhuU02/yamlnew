@@ -8,14 +8,14 @@ schedules:
 
 resources:
   repositories:
-  - repository: new
+  - repository: new1
     type: github
     endpoint: github.com_MadhuU02
-    name: MadhuU02/new
-  - repository: armTemplate
+    name: MadhuU02/new1
+  - repository: Template
     type: github
     endpoint: github.com_MadhuU02
-    name: MadhuU02/armTemplate
+    name: MadhuU02/Template
 
 pool:
   vmImage: 'ubuntu-latest'
