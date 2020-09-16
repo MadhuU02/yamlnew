@@ -12,7 +12,7 @@ resources:
     endpoint: github.com_MadhuU02
     name: MadhuU02/Template
   - repository: new
-    type: azureRepos
+    type: git
     endpoint: new
     name: armTemplate/new
   - repository: yamlnew
