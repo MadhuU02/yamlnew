@@ -21,7 +21,7 @@ steps:
 - script: dir $(Build.SourcesDirectory)
 
 schedules:
-- cron: "0 1 0 0 0"
+- cron: "0 */1 * * *"
   displayName: scheduler
   branches:
     include: [ master ] # which branches the schedule applies to
