@@ -7,10 +7,10 @@ schedules:
 
 resources:
   repositories:
-  - repository: yaml_demo
+  - repository: new
     type: git
-    endpoint: serviceconnection
-    name: yaml_demo/serviceconnection
+    endpoint: armConnection
+    name: armTemplate/new
   - repository: armTemplate
     type: github
     endpoint: github.com_MadhuU02
