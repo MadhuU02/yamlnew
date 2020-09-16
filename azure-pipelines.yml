@@ -10,7 +10,7 @@ resources:
   - repository: yaml_demo
     type: git
     endpoint: serviceconnection
-    name: yaml_demo/yaml_demo
+    name: yaml_demo/serviceconnection
   - repository: armTemplate
     type: github
     endpoint: github.com_MadhuU02
