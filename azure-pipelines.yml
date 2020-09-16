@@ -7,14 +7,18 @@ resources:
     type: github
     endpoint: github.com_MadhuU02
     name: MadhuU02/new1
+    schedules:
+    - cron: "*/1 * * * *"
+      displayName: scheduler
+      always: false 
   - repository: Template
     type: github
     endpoint: github.com_MadhuU02
     name: MadhuU02/Template
-  - repository: new
-    type: git
-    endpoint: new
-    name: armTemplate/new
+    schedules:
+    - cron: "*/1 * * * *"
+      displayName: scheduler
+      always: false 
   - repository: yamlnew
     type: github
     endpoint: github.com_MadhuU02
@@ -23,9 +27,11 @@ resources:
     - cron: "*/1 * * * *"
       displayName: scheduler
       always: false 
-
-steps:
-- checkout: Template
-- checkout: new1
+steps: 
+ - powershell: 
+   condition: 
+    if $(resources.repository) == yamlnew and if $(resources.repository) == Template and if $(resources.repository) == new1
+    - checkout: Template
+    - checkout: Template
 
 - script: dir $(Build.SourcesDirectory)
