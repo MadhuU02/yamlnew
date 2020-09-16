@@ -22,6 +22,6 @@ pool:
 steps:
 - checkout: self
 - checkout: armTemplate
-- checkout: yamlnew
+- checkout: new
 
 - script: dir $(Build.SourcesDirectory)
