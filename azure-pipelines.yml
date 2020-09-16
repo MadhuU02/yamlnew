@@ -10,7 +10,7 @@ resources:
     name: MadhuU02/Template
   - repository: armTemplate
     type: git
-    endpoint: armConnection
+    endpoint: new
     name: armTemplate/armTemplate
   - repository: yamlnew
     type: github
