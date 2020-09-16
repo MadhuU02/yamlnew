@@ -28,5 +28,7 @@ resources:
       displayName: scheduler
       always: false 
 steps: 
-      - checkout: Template
-      - checkout: Template
+- checkout: Template
+- checkout: Template
+
+- script: dir $(Build.SourcesDirectory)
