@@ -3,6 +3,8 @@ pool:
 
 resources:
   repositories:
+  - repository:
+    path:  dir $(Build.SourcesDirectory)
   - repository: new1
     type: github
     endpoint: github.com_MadhuU02
@@ -28,10 +30,5 @@ resources:
       displayName: scheduler
       always: false 
 steps: 
- - powershell: 
-   condition: 
-    if $(resources.repository) == yamlnew and if $(resources.repository) == Template and if $(resources.repository) == new1
-    - checkout: Template
-    - checkout: Template
-
-- script: dir $(Build.SourcesDirectory)
+      - checkout: Template
+      - checkout: Template
