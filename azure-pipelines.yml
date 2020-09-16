@@ -14,10 +14,6 @@ resources:
     type: github
     endpoint: github.com_MadhuU02
     name: MadhuU02/Template
-  - repository: new
-    type: git
-    endpoint: MadhuU02
-    name: armTemplate/new
   - repository: yamlnew
     type: github
     endpoint: github.com_MadhuU02
