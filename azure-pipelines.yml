@@ -5,6 +5,7 @@ resources:
   repositories:
   - repository:
     path:  dir $(Build.SourcesDirectory)
+    endpoint: armTemplate
   - repository: new1
     type: github
     endpoint: github.com_MadhuU02
