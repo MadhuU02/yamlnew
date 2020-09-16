@@ -4,6 +4,10 @@ resources:
     type: github
     endpoint: github.com_MadhuU02
     name: MadhuU02/yamlnew
+  - repository: armTemplate
+    type: github
+    endpoint: github.com_MadhuU02
+    name: MadhuU02/armTemplate
 
 trigger:
 - main
@@ -13,5 +17,7 @@ pool:
 
 steps:
 - checkout: self
+- checkout: armTemplate
+- checkout: yamlnew
 
 - script: dir $(Build.SourcesDirectory)
