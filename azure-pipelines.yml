@@ -1,0 +1,21 @@
+resources:
+  repositories:
+  - repository: yamlnew
+    type: github
+    endpoint: github.com_MadhuU02
+  - repository: armTemplate # In a different organization
+    endpoint: armConnection
+    type: AzureRepos
+
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- checkout: self
+- checkout: yamlrepo
+- checkout: armTemplate
+
+- script: dir $(Build.SourcesDirectory)
