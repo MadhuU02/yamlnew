@@ -1,3 +1,9 @@
+schedules:
+    - cron: "*/1 * * * *"
+      displayName: scheduler
+      branches:
+       exclude: [features/**]
+      always: false # whether to always run the pipeline or only if there have been source code changes since the last successful scheduled run. The default is false.
 resources:
   repositories:
   - repository: new1
