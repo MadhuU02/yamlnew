@@ -8,9 +8,9 @@ schedules:
 resources:
   repositories:
   - repository: new
-    type: git
-    endpoint: armConnection
-    name: armTemplate/new
+    type: github
+    endpoint: github.com_MadhuU02
+    name: MadhuU02/new
   - repository: armTemplate
     type: github
     endpoint: github.com_MadhuU02
