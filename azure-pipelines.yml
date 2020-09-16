@@ -19,5 +19,6 @@ steps:
 - checkout: self
 - checkout: armTemplate
 - checkout: yamlnew
+- checkout: none
 
 - script: dir $(Build.SourcesDirectory)
