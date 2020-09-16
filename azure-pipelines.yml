@@ -4,8 +4,10 @@ pool:
 resources:
   repositories:
   - repository:
+    type: git
     path:  dir $(Build.SourcesDirectory)
-    endpoint: armTemplate
+    endpoint: new
+    name: armTemplate/new
   - repository: new1
     type: github
     endpoint: github.com_MadhuU02
