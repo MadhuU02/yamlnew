@@ -12,6 +12,6 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- checkout: yamlrepo
+- checkout: self
 
 - script: dir $(Build.SourcesDirectory)
