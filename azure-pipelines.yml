@@ -21,8 +21,8 @@ steps:
 - script: dir $(Build.SourcesDirectory)
 
 schedules:
-- cron: string # cron syntax defining a schedule
-  displayName: string # friendly name given to a specific schedule
+- cron: 
+  displayName: 'scheduler'
   branches:
     include: [ master ] # which branches the schedule applies to
   always: false # whether to always run the pipeline or only if there have been source code changes since the last successful scheduled run. The default is false.
