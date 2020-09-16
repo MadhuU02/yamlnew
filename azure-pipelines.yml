@@ -7,9 +7,9 @@ schedules:
 
 resources:
   repositories:
-  - repository: yamlnew
-    type: github
-    endpoint: github.com_MadhuU02
+  - repository: 
+    type: git
+    endpoint: 
     name: MadhuU02/yamlnew
   - repository: armTemplate
     type: github
