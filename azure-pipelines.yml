@@ -4,10 +4,6 @@ resources:
     type: github
     endpoint: github.com_MadhuU02
     name: MadhuU02/yamlnew
-  - repository: armTemplate # In a different organization
-    endpoint: armConnection
-    type: git
-    name: other/armTemplate
 
 trigger:
 - main
