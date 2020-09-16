@@ -7,10 +7,10 @@ schedules:
 
 resources:
   repositories:
-  - repository: 
+  - repository: kubernetes
     type: git
-    endpoint: 
-    name: MadhuU02/yamlnew
+    endpoint: new
+    name: kubernetes/kubernetes
   - repository: armTemplate
     type: github
     endpoint: github.com_MadhuU02
