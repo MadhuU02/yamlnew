@@ -11,9 +11,9 @@ steps:
    inlineScript: |
       $rep =  az repos show --id 
       $preq = az repos pr list --id 
-      for(repo in $repo)
+      for($i in $repo)
       {
-         if (repo == $preq)
+         if ($i == $preq)
          {
          trigger: *
          az repos checkout
