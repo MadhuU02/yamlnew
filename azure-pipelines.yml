@@ -2,24 +2,7 @@ pool:
   name: Hosted VS2017
 
 steps:
-- task: AzureCLI@2
-  displayName: 'list repos'
-  inputs:
-   scriptType: ps
-   scriptLocation: inlineScript
-   azureSubscription: new
-   inlineScript: |
-      $rep =  az repos show --id 
-      $preq = az repos pr list --id 
-      for($i in $repo)
-      {
-         if ($i == $preq)
-         {
-         trigger: *
-         az repos checkout
-         }
-      }
+- powershell:
+      git clone https://github.com/MadhuU02/yamlnew
+      - if:'$CI_PIPELINE_SOURCE == "push"'
       
-      
-
-
