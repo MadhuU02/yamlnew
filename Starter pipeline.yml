@@ -1,0 +1,105 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+ 
+parameters:
+- name: image
+  displayName: Pool Image
+  default: ubuntu-16.04
+  values:
+  - windows-latest
+  - vs2017-win2016
+  - ubuntu-latest
+  - ubuntu-16.04
+  - macOS-latest
+  - macOS-10.14
+- name: azureLocation
+  displayName: azure location
+  default: uksouth
+  values:
+  - eastus
+  - japanwest
+  - southindia
+  - uksouth
+
+trigger: none
+
+stages:
+
+  - stage: firststage
+    jobs:
+
+      - job: firstjob
+        pool:
+          vmImage: ${{ parameters.image }}
+        steps:
+          - bash: |
+              declare -A vars
+              vars[storageaccountName]="somestgacct01"
+              vars[Location]= "southindia"
+              vars[connection]="serviceconnection"
+              vars[RGName]="46203_rg"
+              vars[storageaccountSku]="Standard_LRS"
+              vars[storageaccountKind]="StorageV2"
+              vars[accessTier]="Hot"
+              vars[minimumTlsVersion]="TLS1_0"
+              vars[subscriptionId]=""
+            
+              echo "##vso[task.setvariable variable=vars;isOutput=true]${vars[@]}"
+              name: mystep
+            - bash: |
+                echo "$(mystep.vars[@])"
+          # Publish the folder as pipeline artifact
+          - publish: $(Pipeline.Workspace)/variables
+            artifact: variables
+  
+  - stage: secondstage
+    variables:
+      vars: $[ dependencies.firststage.firstjob.outputs['mystep.'] ]
+        pool:
+    jobs:
+
+      - job: secondjob
+      dependsOn: firstjob
+      variables:
+      vars: $[ dependencies.firststage.firstjob.outputs['mystep.'] ]
+        pool:
+          vmImage: ${{ parameters.image }}
+        steps:
+
+          # Download the artifacts
+          - download: current
+            artifact: variables
+
+          # Read the variable from the file, then expose it in the job
+          - bash: |
+              storageaccountName=$(storageaccountName)
+              Location= $(Location)
+              connection=$(vars[connection)
+              RGName=$(RGName)
+              storageaccountSku=$(storageaccountSku)
+              storageaccountKind=${vars[storageaccountKind]}
+              accessTier=${vars[accessTier]}
+              minimumTlsVersion=${vars[minimumTlsVersion]}
+              subscriptionId=${vars[subscriptionId]}
+
+          
+
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'ARM Template deployment: Resource Group scope'
+            inputs:
+                deploymentScope: 'Resource Group'
+                azureResourceManagerConnection: "$connection"
+                subscriptionId:  "$(subscriptionId)"
+                action: 'Create Or Update Resource Group'
+                resourceGroupName: "$RGName"
+                location: "$Location"
+                templateLocation: 'Linked artifact'
+                csmFile: 'storage/sta_new.json'
+                overrideParameters: '-storageAccountName "$storageaccountName" -location "$Location" -accountType "$storageaccountSku" -kind "$storageaccountKind" -accessTier "$accessTier" -minimumTlsVersion "$minimumTlsVersion" '
+                deploymentMode: 'Incremental'
+
+          
+
+          
