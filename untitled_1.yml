@@ -1,0 +1,156 @@
+parameters:
+- name: image
+  displayName: Pool Image
+  default: vs2017-win2016
+  values:
+  - windows-latest
+  - vs2017-win2016
+  - ubuntu-latest
+  - ubuntu-16.04
+  - macOS-latest
+  - macOS-10.14
+  - windows-2019
+- name: azureLocation
+  displayName: azure location
+  default: uksouth
+  values:
+  - southindia
+  - centralindia
+  - westindia
+  - uksouth
+- name: environment
+  displayName: 'environment'
+  type: string
+  default: Demo
+  values:
+  - Development
+  - QA
+  - UAT
+  - Demo
+  - Production
+- name: connection
+  displayName: azure connection name
+  type: string
+  default: serviceconnection
+  values:
+  - serviceconnection
+  - serviceconnection1
+
+
+trigger: none
+
+
+stages:
+- stage: 'firststage'
+  displayName: 'vnet ans subnet deployment'
+  jobs:
+  - job: components
+    pool:
+      vmImage: ${{ parameters.image }}
+
+    variables:
+    - name: omsName
+      value: newomsname123
+    - name: vNetName
+      value: vnetneww
+    - name: subnetName
+      value: Subnet1
+    - name: RGName
+      value: 46203_rg
+    - name: omsSku
+      value: Standard
+    - name: aksName
+      value: 46203aks
+    - name: spnId
+      value: 457533fd-3799-49f2-a64d-5d8ffb83636b
+    - name: spnSecret
+      value: _RBIso.BIv.s04u4Qg4dGZU~5Io8a1UkeT
+    - name: subsId
+      value: 3dc3cd1a-d5cd-4e3e-a648-b2253048af83
+    - name: resourceGroupFromTemplate
+      value: 46203_rg
+
+    steps:
+      - task: AzurePowerShell@5
+        displayName: 'create or update vnet'
+        inputs:
+          azureSubscription: ${{ parameters.connection }}
+          ScriptType: InlineScript
+          Inline: |
+            # Set the active subscription
+            $null = Set-AzContext -SubscriptionID '$(subsId)'
+             # Check that the resource group is valid
+             $null = Get-AzResourceGroup -Name '$(RGName)'
+            # Create a new Log Analytics workspace if needed
+             try
+              {
+            $vNet = Get-AzVirtualNetwork -Name '$(vNetName)' -ResourceGroupName '$(RGName)' -ErrorAction Stop
+            Write-Output "Vnet named '$(vNetName)' in region ${{ parameters.azureLocation }} already exists." Write-Output "No further action required, script quitting."
+            }
+             catch
+             {
+              Write-Output "Creating new workspace named newworkspace123 in region eastus..."
+              # Create the new workspace for the given name, region, and resource group
+               $subnet=New-AzVirtualNetworkSubnetConfig -Name '$(subnetName)' -AddressPrefix "10.0.0.0/24"
+               $vNet = New-AzVirtualNetwork -Name '$(vNetName)' -ResourceGroupName '$(RGName)' -Location ${{ parameters.azureLocation }} -AddressPrefix "10.0.0.0/24" -Subnet $subnet
+                Write-Output "Created new vnet and subnet named '$(vNetName)' and '$(subnetName)' in region eastus..."
+               }
+          azurePowerShellVersion: LatestVersion
+
+- stage: 'secondstage'
+  displayName: 'aks-oms deployment'
+  jobs:
+    - job: deployment
+      pool:
+        vmImage: ${{ parameters.image }}
+      variables:
+        dependson: 'firststage'
+        vars: '$[ dependencies.firststage.variables[] ]'
+      steps:
+      - task: AzurePowerShell@5
+        displayName: 'create or update oms'
+        inputs:
+          azureSubscription: '${{ parameters.connection }}'
+          ScriptType: InlineScript
+          Inline: |
+            # Set the active subscription
+            $null = Set-AzContext -SubscriptionID '$(subsId)'
+             # Check that the resource group is valid
+             $null = Get-AzResourceGroup -Name '$(RGName)'
+            # Create a new Log Analytics workspace if needed
+             try
+              {
+            $Workspace = Get-AzOperationalInsightsWorkspace -Name '$(omsName)' -ResourceGroupName '$(RGName)' -ErrorAction Stop
+            Write-Output "Workspace named '$(omsName)' in region ${{ parameters.azureLocation }} already exists." Write-Output "No further action required, script quitting."
+            $value = $Workspace.CustomerId
+            $value
+            write-host "##vso[task.setvariable variable=omsId]$value"
+            }
+             catch
+             {
+              Write-Output "Creating new workspace named newworkspace123 in region eastus..."
+              # Create the new workspace for the given name, region, and resource group
+               $Workspace = New-AzOperationalInsightsWorkspace -Location ${{ parameters.azureLocation }} -Name '$(omsName)' -Sku '$(omsSku)' -ResourceGroupName '$(RGName)'
+                Write-Output "Created new workspace named newworkspace123 in region eastus..."
+                $value = $Workspace.CustomerId
+                $value
+                write-host "##vso[task.setvariable variable=omsId]$value"
+               }
+            $value = $Workspace.Id
+            write-host "##vso[task.setvariable variable=omsId]$value"
+          azurePowerShellVersion: LatestVersion
+
+      - task: AzureResourceManagerTemplateDeployment@3
+        displayName: 'aks deploy'
+        inputs:
+            deploymentScope: 'Resource Group'
+            azureResourceManagerConnection: '${{ parameters.connection }}'
+            subscriptionId: '$(subs)'
+            action: 'Create Or Update Resource Group'
+            resourceGroupName: '$(RGName)'
+            location: '${{ parameters.azureLocation }}'
+            templateLocation: 'Linked artifact'
+            csmFile: 'storage/aks_01.json'
+            overrideParameters: '-clusterName ''$(aksName)'' -location ${{ parameters.azureLocation }} -servicePrincipalClientId ''$(spnId)'' -servicePrincipalClientSecret ''$(spnSecret)'' -vnetResourceGroup ''$(RGName)'' -vnetName ''$(vnetName)'' -vnetSubnetName ''$(subnetName)'' -omsSubscriptionId ''$(subsId)'' -omsResourceGroup ''$(RGName)'' -omsWorkspaceName ''$(omsName)'' -environment ''${{ parameters.environment }}'''
+            deploymentMode: 'Incremental'
+
