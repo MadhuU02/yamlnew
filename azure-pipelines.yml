@@ -1,34 +1,25 @@
 pool:
-  vmImage: 'vs2017-win2016'
+  name: Hosted VS2017
 
-resources:
-  repositories:
-  - repository: new1
-    type: github
-    endpoint: github.com_MadhuU02
-    name: MadhuU02/new1
-    schedules:
-    - cron: "*/1 * * * *"
-      displayName: scheduler
-      always: false 
-  - repository: Template
-    type: github
-    endpoint: github.com_MadhuU02
-    name: MadhuU02/Template
-    schedules:
-    - cron: "*/1 * * * *"
-      displayName: scheduler
-      always: false 
-  - repository: yamlnew
-    type: github
-    endpoint: github.com_MadhuU02
-    name: MadhuU02/yamlnew
-    schedules:
-    - cron: "*/1 * * * *"
-      displayName: scheduler
-      always: false 
-steps: 
-- checkout: Template
-- checkout: Template
+steps:
+- task: AzureCLI@2
+  displayName: 'list repos'
+  inputs:
+   scriptType: ps
+   scriptLocation: inlineScript
+   azureSubscription: new
+   inlineScript: |
+      $rep =  az repos show --id 
+      $preq = az repos pr list --id 
+      for(repo in $repo)
+      {
+         if (repo == $preq)
+         {
+         trigger: *
+         az repos checkout
+         }
+      }
+      
+      
 
-- script: dir $(Build.SourcesDirectory)
+
