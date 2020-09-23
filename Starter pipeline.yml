@@ -22,6 +22,7 @@ parameters:
   - japanwest
   - southindia
   - uksouth
+  - westus
 
 trigger: none
 
